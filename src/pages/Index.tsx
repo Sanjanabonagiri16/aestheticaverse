@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CaptionSlider } from "@/components/CaptionSlider";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { LanguageSelect } from "@/components/LanguageSelect";
+import { HashtagManager } from "@/components/HashtagManager";
 import { Button } from "@/components/ui/button";
 import { BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -53,6 +54,8 @@ const Index = () => {
 
           <CaptionSlider captions={dummyCaptions} />
         </div>
+
+        <HashtagManager />
       </div>
     </div>
   );
