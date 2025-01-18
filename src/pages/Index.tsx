@@ -5,6 +5,8 @@ import { LanguageSelect } from "@/components/LanguageSelect";
 import { HashtagManager } from "@/components/HashtagManager";
 import { LanguageToneAdjuster } from "@/components/LanguageToneAdjuster";
 import { FeedbackButton } from "@/components/FeedbackButton";
+import { EngagementPredictor } from "@/components/EngagementPredictor";
+import { OptimalTimePredictor } from "@/components/OptimalTimePredictor";
 import { Button } from "@/components/ui/button";
 import { BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -72,6 +74,11 @@ const Index = () => {
             onToneChange={setToneSetting}
             onStyleChange={setWritingStyle}
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <EngagementPredictor />
+          <OptimalTimePredictor />
         </div>
 
         <HashtagManager />
