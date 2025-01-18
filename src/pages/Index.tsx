@@ -3,6 +3,8 @@ import { CaptionSlider } from "@/components/CaptionSlider";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { LanguageSelect } from "@/components/LanguageSelect";
 import { HashtagManager } from "@/components/HashtagManager";
+import { LanguageToneAdjuster } from "@/components/LanguageToneAdjuster";
+import { FeedbackButton } from "@/components/FeedbackButton";
 import { Button } from "@/components/ui/button";
 import { BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -18,9 +20,16 @@ const dummyCaptions = [
 const Index = () => {
   const [selectedTheme, setSelectedTheme] = useState("travel");
   const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const [toneSetting, setToneSetting] = useState(50);
+  const [writingStyle, setWritingStyle] = useState("casual");
 
   const handleSave = () => {
     toast.success("Caption saved to your collection!");
+  };
+
+  const handleFeedback = (isPositive: boolean) => {
+    // In a real implementation, this would send feedback to the backend
+    console.log("Feedback received:", isPositive);
   };
 
   return (
@@ -41,10 +50,13 @@ const Index = () => {
               value={selectedLanguage}
               onValueChange={setSelectedLanguage}
             />
-            <Button onClick={handleSave} className="gap-2">
-              <BookmarkPlus className="h-4 w-4" />
-              Save Caption
-            </Button>
+            <div className="flex gap-4 items-center">
+              <FeedbackButton onFeedback={handleFeedback} />
+              <Button onClick={handleSave} className="gap-2">
+                <BookmarkPlus className="h-4 w-4" />
+                Save Caption
+              </Button>
+            </div>
           </div>
 
           <ThemeSelector
@@ -53,6 +65,13 @@ const Index = () => {
           />
 
           <CaptionSlider captions={dummyCaptions} />
+
+          <LanguageToneAdjuster
+            currentTone={toneSetting}
+            currentStyle={writingStyle}
+            onToneChange={setToneSetting}
+            onStyleChange={setWritingStyle}
+          />
         </div>
 
         <HashtagManager />
