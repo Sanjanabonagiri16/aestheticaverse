@@ -9,6 +9,7 @@ import { EngagementPredictor } from "@/components/EngagementPredictor";
 import { OptimalTimePredictor } from "@/components/OptimalTimePredictor";
 import { PhotoEnhancer } from "@/components/PhotoEnhancer";
 import { CaptionMoodBoard } from "@/components/CaptionMoodBoard";
+import { MemeCaptionGenerator } from "@/components/MemeCaptionGenerator";
 import { Button } from "@/components/ui/button";
 import { BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -85,6 +86,8 @@ const Index = () => {
         <PhotoEnhancer />
 
         <CaptionMoodBoard />
+
+        <MemeCaptionGenerator />
 
         <HashtagManager />
       </div>
