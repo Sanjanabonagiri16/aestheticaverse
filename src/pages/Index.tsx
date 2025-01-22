@@ -8,6 +8,7 @@ import { FeedbackButton } from "@/components/FeedbackButton";
 import { EngagementPredictor } from "@/components/EngagementPredictor";
 import { OptimalTimePredictor } from "@/components/OptimalTimePredictor";
 import { PhotoEnhancer } from "@/components/PhotoEnhancer";
+import { CaptionMoodBoard } from "@/components/CaptionMoodBoard";
 import { Button } from "@/components/ui/button";
 import { BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -31,7 +32,6 @@ const Index = () => {
   };
 
   const handleFeedback = (isPositive: boolean) => {
-    // In a real implementation, this would send feedback to the backend
     console.log("Feedback received:", isPositive);
   };
 
@@ -83,6 +83,8 @@ const Index = () => {
         </div>
 
         <PhotoEnhancer />
+
+        <CaptionMoodBoard />
 
         <HashtagManager />
       </div>
