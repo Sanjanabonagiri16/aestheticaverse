@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      caption_feedback: {
+        Row: {
+          caption: string
+          created_at: string | null
+          feedback_type: string | null
+          id: string
+          is_positive: boolean
+          user_id: string
+        }
+        Insert: {
+          caption: string
+          created_at?: string | null
+          feedback_type?: string | null
+          id?: string
+          is_positive: boolean
+          user_id: string
+        }
+        Update: {
+          caption?: string
+          created_at?: string | null
+          feedback_type?: string | null
+          id?: string
+          is_positive?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       hashtag_performance: {
         Row: {
           avg_engagement: number | null
@@ -107,6 +134,39 @@ export type Database = {
           id?: string
           last_updated?: string | null
           sample_size?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          id: string
+          preferred_language: string | null
+          preferred_style: string | null
+          preferred_tone: string | null
+          theme_preferences: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          preferred_language?: string | null
+          preferred_style?: string | null
+          preferred_tone?: string | null
+          theme_preferences?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          preferred_language?: string | null
+          preferred_style?: string | null
+          preferred_tone?: string | null
+          theme_preferences?: Json | null
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []

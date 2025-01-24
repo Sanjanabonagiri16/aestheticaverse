@@ -1,19 +1,44 @@
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FeedbackButtonProps {
   onFeedback: (isPositive: boolean) => void;
+  caption: string;
 }
 
-export const FeedbackButton = ({ onFeedback }: FeedbackButtonProps) => {
-  const handleFeedback = (isPositive: boolean) => {
-    onFeedback(isPositive);
-    toast.success(
-      isPositive
-        ? "Thanks for the positive feedback!"
-        : "Thanks for helping us improve!"
-    );
+export const FeedbackButton = ({ onFeedback, caption }: FeedbackButtonProps) => {
+  const handleFeedback = async (isPositive: boolean) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error("Please sign in to provide feedback");
+        return;
+      }
+
+      const { error } = await supabase
+        .from('caption_feedback')
+        .insert({
+          user_id: user.id,
+          caption,
+          is_positive: isPositive,
+          feedback_type: isPositive ? 'like' : 'dislike'
+        });
+
+      if (error) throw error;
+
+      onFeedback(isPositive);
+      toast.success(
+        isPositive
+          ? "Thanks for the positive feedback!"
+          : "Thanks for helping us improve!"
+      );
+    } catch (error) {
+      console.error("Error saving feedback:", error);
+      toast.error("Failed to save feedback");
+    }
   };
 
   return (
