@@ -36,6 +36,39 @@ export type Database = {
         }
         Relationships: []
       }
+      content_moderation: {
+        Row: {
+          content: string
+          content_type: string
+          created_at: string | null
+          id: string
+          moderation_reason: string | null
+          moderation_status: string
+          reviewed_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          content_type: string
+          created_at?: string | null
+          id?: string
+          moderation_reason?: string | null
+          moderation_status?: string
+          reviewed_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          content_type?: string
+          created_at?: string | null
+          id?: string
+          moderation_reason?: string | null
+          moderation_status?: string
+          reviewed_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       hashtag_performance: {
         Row: {
           avg_engagement: number | null
@@ -68,6 +101,36 @@ export type Database = {
           last_used?: string | null
           total_engagement?: number | null
           usage_count?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      photo_enhancement_suggestions: {
+        Row: {
+          applied_suggestions: Json | null
+          created_at: string | null
+          id: string
+          image_url: string
+          suggestions: Json
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          applied_suggestions?: Json | null
+          created_at?: string | null
+          id?: string
+          image_url: string
+          suggestions: Json
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          applied_suggestions?: Json | null
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          suggestions?: Json
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -171,15 +234,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
+      }
+      is_moderator: {
+        Args: {
+          user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "user" | "moderator" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
