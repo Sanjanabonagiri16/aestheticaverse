@@ -13,7 +13,9 @@ import {
   ImagePlus,
   Upload,
   Check,
-  Loader2
+  Loader2,
+  Sparkles,
+  Camera
 } from "lucide-react";
 
 export const PhotoEnhancer = () => {
@@ -22,19 +24,17 @@ export const PhotoEnhancer = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const { data: suggestions, isLoading } = useQuery({
-    queryKey: ["photo-suggestions", imageUrl],
+  const { data: analysis, isLoading: isAnalyzing } = useQuery({
+    queryKey: ["photo-analysis", imageUrl],
     queryFn: async () => {
       if (!imageUrl) return null;
       
-      const response = await fetch('/api/analyze-photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl })
+      const response = await supabase.functions.invoke('analyze-photo', {
+        body: { imageUrl }
       });
-      
-      if (!response.ok) throw new Error('Failed to analyze photo');
-      return response.json();
+
+      if (response.error) throw new Error('Failed to analyze photo');
+      return response.data;
     },
     enabled: !!imageUrl
   });
@@ -72,33 +72,12 @@ export const PhotoEnhancer = () => {
     }
   };
 
-  const enhancementSuggestions = [
-    {
-      id: 1,
-      type: "crop",
-      icon: <Crop className="h-4 w-4" />,
-      text: suggestions?.suggestions?.crop || "Upload an image for crop suggestions",
-    },
-    {
-      id: 2,
-      type: "brightness",
-      icon: <SunMedium className="h-4 w-4" />,
-      text: suggestions?.suggestions?.brightness || "Upload an image for brightness suggestions",
-    },
-    {
-      id: 3,
-      type: "contrast",
-      icon: <Contrast className="h-4 w-4" />,
-      text: suggestions?.suggestions?.contrast || "Upload an image for contrast suggestions",
-    },
-  ];
-
   return (
     <Card className="p-6 bg-white/50 backdrop-blur-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Photo Enhancement</h3>
+        <h3 className="text-lg font-semibold">AI Photo Enhancement</h3>
         <Badge variant="outline" className="gap-1">
-          <ImagePlus className="h-4 w-4" />
+          <Sparkles className="h-4 w-4" />
           AI Powered
         </Badge>
       </div>
@@ -127,48 +106,102 @@ export const PhotoEnhancer = () => {
           </div>
         </div>
 
-        <div className="space-y-2">
-          {enhancementSuggestions.map((suggestion) => (
-            <div
-              key={suggestion.id}
-              className="flex items-center gap-2 p-2 rounded-lg bg-white/30 backdrop-blur-sm"
-            >
-              {suggestion.icon}
-              <span className="text-sm">{suggestion.text}</span>
-              <Check className="h-4 w-4 ml-auto text-green-500" />
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-4 mt-6">
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <label className="text-sm font-medium">Brightness</label>
-              <span className="text-sm text-gray-500">{brightness}%</span>
-            </div>
-            <Slider
-              value={brightness}
-              onValueChange={setBrightness}
-              max={100}
-              step={1}
-              className="w-full"
+        {imageUrl && (
+          <div className="relative aspect-video rounded-lg overflow-hidden">
+            <img 
+              src={imageUrl} 
+              alt="Uploaded photo"
+              className="object-cover w-full h-full"
+              style={{
+                filter: `brightness(${brightness}%) contrast(${contrast}%)`
+              }}
             />
           </div>
+        )}
 
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <label className="text-sm font-medium">Contrast</label>
-              <span className="text-sm text-gray-500">{contrast}%</span>
-            </div>
-            <Slider
-              value={contrast}
-              onValueChange={setContrast}
-              max={100}
-              step={1}
-              className="w-full"
-            />
+        {isAnalyzing ? (
+          <div className="flex items-center justify-center p-4">
+            <Loader2 className="h-6 w-6 animate-spin mr-2" />
+            <span>Analyzing image...</span>
           </div>
-        </div>
+        ) : analysis?.suggestions ? (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2 p-4 bg-white/30 rounded-lg">
+                <h4 className="font-medium">Scene Detection</h4>
+                {analysis.suggestions.scene.map((scene, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Camera className="h-4 w-4" />
+                    <span>{scene.label}</span>
+                    <span className="text-sm text-gray-500">
+                      {Math.round(scene.confidence * 100)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2 p-4 bg-white/30 rounded-lg">
+                <h4 className="font-medium">Mood Detection</h4>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  <span>{analysis.suggestions.emotion}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="font-medium">Suggested Captions</h4>
+              {analysis.suggestions.suggestedCaptions.map((caption, index) => (
+                <div
+                  key={index}
+                  className="p-3 bg-white/30 rounded-lg flex items-start gap-2"
+                >
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="mt-1 shrink-0"
+                    onClick={() => {
+                      navigator.clipboard.writeText(caption);
+                      toast.success("Caption copied to clipboard!");
+                    }}
+                  >
+                    <Check className="h-4 w-4" />
+                  </Button>
+                  <p className="text-sm">{caption}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <label className="text-sm font-medium">Brightness</label>
+                  <span className="text-sm text-gray-500">{brightness}%</span>
+                </div>
+                <Slider
+                  value={brightness}
+                  onValueChange={setBrightness}
+                  max={200}
+                  step={1}
+                  className="w-full"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <label className="text-sm font-medium">Contrast</label>
+                  <span className="text-sm text-gray-500">{contrast}%</span>
+                </div>
+                <Slider
+                  value={contrast}
+                  onValueChange={setContrast}
+                  max={200}
+                  step={1}
+                  className="w-full"
+                />
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </Card>
   );
