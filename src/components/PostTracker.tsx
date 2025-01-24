@@ -23,6 +23,12 @@ export const PostTracker = () => {
       comments: number;
       shares: number;
     }) => {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        throw new Error("User must be authenticated to track posts");
+      }
+
       const engagementScore = postData.likes + (postData.comments * 2) + (postData.shares * 3);
       
       const { error } = await supabase
@@ -34,6 +40,7 @@ export const PostTracker = () => {
           shares: postData.shares,
           engagement_score: engagementScore,
           posted_at: new Date().toISOString(),
+          user_id: user.id
         });
 
       if (error) throw error;
