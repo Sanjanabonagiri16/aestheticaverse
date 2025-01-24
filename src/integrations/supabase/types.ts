@@ -9,7 +9,108 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      hashtag_performance: {
+        Row: {
+          avg_engagement: number | null
+          category: string | null
+          created_at: string | null
+          hashtag: string
+          id: string
+          last_used: string | null
+          total_engagement: number | null
+          usage_count: number | null
+          user_id: string
+        }
+        Insert: {
+          avg_engagement?: number | null
+          category?: string | null
+          created_at?: string | null
+          hashtag: string
+          id?: string
+          last_used?: string | null
+          total_engagement?: number | null
+          usage_count?: number | null
+          user_id: string
+        }
+        Update: {
+          avg_engagement?: number | null
+          category?: string | null
+          created_at?: string | null
+          hashtag?: string
+          id?: string
+          last_used?: string | null
+          total_engagement?: number | null
+          usage_count?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      post_engagement: {
+        Row: {
+          caption: string
+          comments: number | null
+          created_at: string | null
+          engagement_score: number
+          id: string
+          likes: number | null
+          posted_at: string | null
+          shares: number | null
+          user_id: string
+        }
+        Insert: {
+          caption: string
+          comments?: number | null
+          created_at?: string | null
+          engagement_score: number
+          id?: string
+          likes?: number | null
+          posted_at?: string | null
+          shares?: number | null
+          user_id: string
+        }
+        Update: {
+          caption?: string
+          comments?: number | null
+          created_at?: string | null
+          engagement_score?: number
+          id?: string
+          likes?: number | null
+          posted_at?: string | null
+          shares?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      posting_times: {
+        Row: {
+          day_of_week: number
+          engagement_score: number
+          hour_of_day: number
+          id: string
+          last_updated: string | null
+          sample_size: number
+          user_id: string
+        }
+        Insert: {
+          day_of_week: number
+          engagement_score?: number
+          hour_of_day: number
+          id?: string
+          last_updated?: string | null
+          sample_size?: number
+          user_id: string
+        }
+        Update: {
+          day_of_week?: number
+          engagement_score?: number
+          hour_of_day?: number
+          id?: string
+          last_updated?: string | null
+          sample_size?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -5,6 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, TrendingUp, Hash, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Hashtag {
   id: string;
@@ -13,16 +16,26 @@ interface Hashtag {
   engagement?: number;
 }
 
-// Temporary mock data until API integration
-const mockHashtags: Hashtag[] = [
-  { id: "1", text: "aestheticfeed", category: "trending", engagement: 1200 },
-  { id: "2", text: "moodboard", category: "trending", engagement: 980 },
-  { id: "3", text: "minimalstyle", category: "engagement", engagement: 750 },
-  { id: "4", text: "aestheticverse", category: "niche", engagement: 250 },
-];
-
 export const HashtagManager = () => {
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
+
+  const { data: hashtagData, isLoading } = useQuery({
+    queryKey: ["hashtag-performance"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("hashtag_performance")
+        .select("id, hashtag, category, avg_engagement")
+        .order("avg_engagement", { ascending: false });
+
+      if (error) throw error;
+      return data.map(tag => ({
+        id: tag.id,
+        text: tag.hashtag,
+        category: tag.category || "niche",
+        engagement: Math.round(tag.avg_engagement || 0)
+      }));
+    }
+  });
 
   const handleHashtagSelect = (hashtag: string) => {
     if (selectedHashtags.includes(hashtag)) {
@@ -40,6 +53,10 @@ export const HashtagManager = () => {
     navigator.clipboard.writeText(selectedHashtags.map(tag => `#${tag}`).join(" "));
     toast.success("Hashtags copied to clipboard!");
   };
+
+  if (isLoading) {
+    return <Skeleton className="h-[400px] w-full" />;
+  }
 
   return (
     <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 space-y-4">
@@ -67,8 +84,8 @@ export const HashtagManager = () => {
           <TabsContent key={category} value={category}>
             <ScrollArea className="h-[200px] w-full rounded-md border p-4">
               <div className="flex flex-wrap gap-2">
-                {mockHashtags
-                  .filter((hashtag) => hashtag.category === category)
+                {hashtagData
+                  ?.filter((hashtag) => hashtag.category === category)
                   .map((hashtag) => (
                     <Badge
                       key={hashtag.id}

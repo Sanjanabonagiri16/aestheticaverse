@@ -1,27 +1,47 @@
 import { Card } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
-
-const mockEngagementData = [
-  { caption: "City lights ✨", engagement: 85 },
-  { caption: "Morning vibes ☀️", engagement: 72 },
-  { caption: "Weekend mood 🌊", engagement: 68 },
-  { caption: "Coffee time ☕", engagement: 63 },
-];
-
-const config = {
-  engagement: {
-    color: "#8b5cf6",
-  },
-};
+import { BarChart, Bar, XAxis, YAxis } from "recharts";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const EngagementPredictor = () => {
+  const { data: engagementData, isLoading } = useQuery({
+    queryKey: ["post-engagement"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("post_engagement")
+        .select("caption, engagement_score")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      return data.map(post => ({
+        caption: post.caption,
+        engagement: post.engagement_score
+      }));
+    }
+  });
+
+  const config = {
+    engagement: {
+      color: "#8b5cf6",
+    },
+  };
+
+  if (isLoading) {
+    return <Skeleton className="h-[300px] w-full" />;
+  }
+
   return (
     <Card className="p-6 bg-white/50 backdrop-blur-sm">
       <h3 className="text-lg font-semibold mb-4">Engagement Prediction</h3>
       <div className="h-64">
         <ChartContainer config={config}>
-          <BarChart data={mockEngagementData} margin={{ top: 20, right: 0, left: 0, bottom: 20 }}>
+          <BarChart 
+            data={engagementData} 
+            margin={{ top: 20, right: 0, left: 0, bottom: 20 }}
+          >
             <XAxis
               dataKey="caption"
               tickLine={false}
