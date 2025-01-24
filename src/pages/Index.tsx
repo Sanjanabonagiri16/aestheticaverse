@@ -10,11 +10,11 @@ import { OptimalTimePredictor } from "@/components/OptimalTimePredictor";
 import { PhotoEnhancer } from "@/components/PhotoEnhancer";
 import { CaptionMoodBoard } from "@/components/CaptionMoodBoard";
 import { MemeCaptionGenerator } from "@/components/MemeCaptionGenerator";
+import { PostTracker } from "@/components/PostTracker";
 import { Button } from "@/components/ui/button";
 import { BookmarkPlus } from "lucide-react";
 import { toast } from "sonner";
 
-// Temporary captions for demonstration
 const dummyCaptions = [
   "Chasing dreams under city lights ✨",
   "Living life one adventure at a time 🌎",
@@ -77,6 +77,8 @@ const Index = () => {
             onStyleChange={setWritingStyle}
           />
         </div>
+
+        <PostTracker />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <EngagementPredictor />
