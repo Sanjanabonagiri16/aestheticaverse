@@ -27,6 +27,7 @@ const Index = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const [toneSetting, setToneSetting] = useState(50);
   const [writingStyle, setWritingStyle] = useState("casual");
+  const [currentCaption, setCurrentCaption] = useState(dummyCaptions[0]);
 
   const handleSave = () => {
     toast.success("Caption saved to your collection!");
@@ -55,7 +56,10 @@ const Index = () => {
               onValueChange={setSelectedLanguage}
             />
             <div className="flex gap-4 items-center">
-              <FeedbackButton onFeedback={handleFeedback} />
+              <FeedbackButton 
+                onFeedback={handleFeedback} 
+                caption={currentCaption}
+              />
               <Button onClick={handleSave} className="gap-2">
                 <BookmarkPlus className="h-4 w-4" />
                 Save Caption
