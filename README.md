@@ -97,16 +97,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Team
 
-- **Sanjana Bonagiri** - *Lead Developer* - [GitHub](https://github.com/Sanjanabonagiri16)
+- **Sanjana Bonagiri** - *Lead Developer & Designer* - [GitHub](https://github.com/Sanjanabonagiri16)
 
 ## 📞 Contact
 
-- Email: your.email@example.com
+- Email: sanjanabonagiri16@gmail.com
 - Twitter: [@aestheticaverse](https://twitter.com/aestheticaverse)
 - Instagram: [@aestheticaverse](https://instagram.com/aestheticaverse)
 
 ---
 
 <div align="center">
-  Made with ❤️ by the AestheticaVerse Team
+  Made with ❤️ by Sanjana Bonagiri
 </div>
